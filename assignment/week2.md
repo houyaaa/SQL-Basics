@@ -64,21 +64,34 @@ where type1='Fire'
 가독성 있는 쿼리가 중요 -> enter키 
 
 ## 2-5. 집계 (Group By / HAVING / SUM,COUNT)
-
 ~~~
 ✅ 학습 목표 :
 * 데이터를 집계하고 그룹화하는 방법을 설명할 수 있다.
 * GROUP BY, HAVING, ORDER BY, 집계함수(SUM/COUNT 등)을 활용하는 방법을 설명할 수 있다.
 * having과 where의 차이에 대해서 설명할 수 있다.
 ~~~
+grop_by: 집계하고 싶은 경우
+distint: 고유값을 알고 싶은 경우
+where: 조건을 설정하고 싶은 경우 + having 
+order by: 정렬하고 싶은 경우
+limit: 출력 개수 제한
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+ex)포켓몬의 수를 타입별로 집계, 포켓몬의 수가 10이상인 타입만 남김, 포켓몬의 수가 많은 순으로 정렬
+
+select
+type1,
+count(id) as type_count
+from basic.pokemon
+group by type1
+having type_count >=10
+order by type_count DESC
+
 
 
 
 # 2️⃣ 학습 인증란
 
-<!-- 이 글을 지우고, 여기에 학습한 것을 인증해주세요.-->
+<img width="1919" height="1000" alt="image" src="https://github.com/user-attachments/assets/be3cdc94-9d21-4dab-b405-e17a73066da9" />
 
 
 
@@ -104,7 +117,19 @@ FROM pokemon;
 
 
 ~~~
-여기에 답을 작성해주세요!
+SQL 쿼리에는 순서가 있습니다
+select 후에 사용할 컬럼과 계산식
+from 후에 활용할 데이터 셋
+그 이후에 where, having을 포함한 조건문이 붙습니다.
+
+올바른 쿼리문은 다음과 같습니다.
+
+SELECT
+id,
+type AS 포켓몬 이름
+FrOM 데이터셋 이름.pokemon
+where
+type = 'Electric'
 ~~~
 
 
@@ -123,7 +148,17 @@ GROUP BY type;
 
 
 ~~~
-여기에 답을 작성해주세요.
+타입별 평균 공격력 60이상
+select
+type,
+avg(attack) AS avg_attack
+from 데이터셋 이름.pokemon
+group by type #그룹을 지어야 그들끼리 더하거나 빼거나 평균을 구하거나 할거니까 필수적임 그룹을 짓지 않으면 avg함수를 쓸 수 없음 
+having avg_attack >=60
+
+오류가 발생한 이유는 where 때문입니다. where은 table에 바로 조건을 설정하고 싶은 경우에 사용하는 반면 having은 예문처럼 group by를 한 후에 조건을 설정하고 싶은 경우에 사용됩니다. 
+
+
 ~~~
 
 
