@@ -252,7 +252,8 @@ group by all
 
 # 2️⃣ 학습 인증란
 
-c:\Users\82103\Pictures\Screenshots\스크린샷 2025-09-20 160150.png
+<img width="1919" height="1079" alt="스크린샷 2025-09-20 160150" src="https://github.com/user-attachments/assets/f165603a-692b-4bde-9ec7-df877fbdb149" />
+
 
 
 
