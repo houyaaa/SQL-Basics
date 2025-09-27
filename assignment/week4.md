@@ -54,11 +54,6 @@
 * 오류 메시지를 보고 디버깅이라는 과정을 수행할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
-
-
-
-## 4-2. 데이터 타입과 데이터 변환(CAST, SAFE_CAST)
 
 ~~~
 ✅ 학습 목표 :
@@ -66,7 +61,111 @@
 * 데이터 타입을 변환하는 방법을 설명할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+1. SELECT  list must not be emty at [10:1]
+   ```
+   select
+    col # -> 이 부분이 비어있다는 오류
+   from
+   ```
+
+2. Number of arguments does not match for aggregate function COUNT
+   ```
+   SELECT
+     COUNT(id, name) # -> 이 부분에 두 개 이상의 컬럼이 들어갈 수 없음
+   FROM basic.pokemon
+   ```
+   - 해석: 집계 함수 COUNT의 인자 수가 일치하지 않습니다
+     
+
+3. Select list expression references column type1 a which is neither grouped nor aggregated
+   ```
+   SELECT
+     type1,
+     COUNT(id) AS cnt
+   FROM basic.pokemon
+    # 여기서 groupby type1 이 있어야함
+   ```
+- 해석: select 목록 식은 다음에서 그룹화되거나 집계되지 않은 열을 참조합니다
+- group by에 적절한 컬럼을 명시하지 않았을 경우 발생하는 오류
+  
+4. syntax error: Expected end of input but got keyword SELECT
+   ```
+   SELECT
+     type1,
+     COUNT(id) AS cnt
+   FROM basic.pokemon
+   GROUP BY
+     type1
+
+   SELECT
+     *
+   FROM basic.trainer
+   
+   ```
+- 해석: 입력이 끝날 것으로 예상되었지만 SELECT 키워드가 입력되었습니다 
+- 하나의 쿼리엔 SELECT가 1개만 있어야함
+- 쿼리가 끝나는 부분에 ; 추가
+
+  5. syntax error: Expected end of input but got keyword WHERE at [5:1]
+     ```
+     SELECT
+       *
+     FROM basic.trainer LIMIT 10
+     WHERE
+       id =3
+     ```
+- 해석: 입력이 끝날 것으로 예상되었지만 [5:1]에서 키워드 WHERE를 얻었습니다.
+- [5:1] -> [줄:칸]
+- LIMIT 함수는 가장 마지막에 나와야함
+
+6. syntax error: Expected ")" but got end of script at [8:1]
+
+- 해석: )가 예상되었지만 [8:11]에서 스크립트가 끝났습니다
+- 항상 (가 있으면 )를 마지막에 써줘야한다
+  
+
+## 4-2. 데이터 타입과 데이터 변환(CAST, SAFE_CAST)
+### 데이터 타입
+1. 숫자(int64)
+2. 문자(string)
+3. 시간 날짜 -> ex) 2022-09-29 , 2012-03-19 23:45:29
+4. 부울(Bool) -> 참/거짓
+
+### 데이터 타입이 중요한 이유
+- 보이는 것과 저장된 것의 차이
+- 엑셀 상에서 NaN라고 적혀 있는 것이 빈 셀(NULL)인지 문자열인지 육안으로 알 수 없음
+
+### 자료 타입 변경하기
+- 변경함수: CAST
+  ```
+  select
+    cast(1 AS STRING)
+  ```
+  숫자 1을 문자 1로 변경
+
+  ```
+  select
+    cast("후영리" AS INT64)
+  ```
+  문자열을 숫자로 어떻게 바꿔
+  오류가 발생!
+
+  <안전하게 데이터 타입 변경>
+  SAFE_CAST함수
+  : 변환이 실패할 경우 NULL 반환
+
+  ```
+    select
+    cast("후영리" AS INT64)
+  ```
+"후영리"는 NULL로 반환됨
+
+### 수학함수
+- 외울 필요없고 필요할 때 찾아써라
+- 나누기를 할 때,
+    - x/y 대신 SAFE_DIVIDE함수 이용
+    - x,y중 하나라도 0인 경우, 그냥 나누면 zero error 발     
+  
 
 
 
@@ -77,7 +176,47 @@
 * 문자열 함수들의 종류를 이해하고 어떠한 상황에서 사용하는지 설명할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+### concat(문자열 붙이기)
+```
+select
+  concat("안녕","하세요") as result
+```
+- from이 없어도 작동
+- concat 인자로 string이나 숫자를 넣을 때는 데이터를 직접 넣어주게 되는것
+
+### split(문자열 분리하기)
+```
+select
+  split("가,나,다,라",",") as result
+```
+- split(문자열_원본, "나눌기준이 되는 문자")
+- 띄어쓰기도 유의
+
+### replace(특정 단어 수정하기)
+```
+select
+  replace("안녕하세요","하세요","하십니까")
+```
+
+- replace(문자열 원본, 바꿀 대상이 되는 단어, 바꿀 단어)
+
+### trim(문자열 자르기)
+```
+select
+  trim("후영리","후")
+```
+
+- trim(문자열 원본, 자를단어)
+- 자른다기보다는 없애주는 기능
+
+### upper(영어 대문자 변환)
+```
+select
+  upper('abc')
+```
+
+- upper(문자열 원본)
+- 데이터에서 같은 스펠링이지만 대문자, 소문자 다양한 형태로 이루어진 변수를 찾을 때 유용
 
 
 
@@ -90,7 +229,66 @@
 * 시간함수들의 종류와 시간의 차이를 추출하는 방법을 설명할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+### 날짜 및 시간 데이터 타입 파악하기
+1. date
+   date만 표시하는 데이터, 2023-01-02
+
+2. datetime
+   date+time 표시 데이터, time zone 정보x, 2020-09-19 12:01:09
+
+3. time
+   time만 표시하는 데이터, 09:23:45
+
+### TIMEZONE
+#### GMT
+영국 그리니치 천문대 기준
+한국시간: GMT + 9
+
+#### UTC
+국제 표준시간
+한국시간: UTC + 9
+
+#### TIMESTAMP
+UTC부터 경과한 시간을 나타내는 값
+TIMEZONE정보 있음
+ex) 2023-12-31 14:33:20 UTC
+
+
+### millisecond, microsecond
+#### millisecond
+- 1,000ms = 1초
+- millisecond -> timestamp -> datetime으로 변경
+
+#### microsecond
+- 1,000,000us = 1초
+
+ex) 1704176819711ms
+```
+select
+  timestamp_millis(1704176819711) as milli_to_timestamp_value,
+  timestamp_micro(1704176819711000) as micro_to_timestamp_value,
+  datetime(timestamp_micros(1704176819711000)) as datetime_value;
+```
+- 잘못된 쿼리
+- 한국시간이 기준인데 UTC시간으로 나왔음
+
+```
+  datetime(timestamp_micros(1704176819711000),'Asia/Seoul') as datetime_value_seoul;
+```
+- 'Asia/Seoul'을 추가해줘야함
+
+**table에 시간이 timestamp로 저장된 경우가 많음 -> timestamp => datetime 변환이 필요할 수 있음**
+
+### TIMESTAMP와 DATETIME비교
+
+```
+SELECT
+ CURRENT_TIMESTAMP() AS timestamp_col
+ DATETIME((CURRENT_TIMESTAMP().'Asia/Seoul') AS datetime_col
+```
+timestamp_col: 현재 UTC시간
+datetime_col: 현재 한국시간 
+
 
 
 
@@ -101,6 +299,10 @@
 ---
 
 # 2️⃣ 확인문제 & 문제 인증
+
+# 인증샷
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/63a322c9-f1b5-4694-91fd-6f0837931701" />
+
 
 ## 프로그래머스 문제 
 
@@ -114,9 +316,18 @@
 
 <!-- 문제를 풀기 위하여 로그인이  필요합니다. -->
 
-<!-- 정답을 맞추게 되면, 정답입니다. 라는 칸이 생성되는데 이 부분을 캡처해서 이 주석을 지우시고 첨부해주시면 됩니다. --> 
+<img width="961" height="1079" alt="image" src="https://github.com/user-attachments/assets/0aac36e2-a351-421b-accb-28d5ac774721" />
 
 
+2021년에 가입한 회원 중 나이가 20세 이상 29세 이하인 회원이 몇 명인지 출력
+
+```
+select
+  COUNT(USER_ID) AS CNT
+from USER_INFO
+WHERE
+  JOINED(YEAR) = 2021 AND AGE >= AND AGE <=29
+```
 
 ## 문제 1
 
@@ -144,7 +355,14 @@ WHERE AGE BETWEEN 20 AND 29
 
 
 ~~~
-여기에 답을 작성해주세요!
+첫 번째 오류 메세지: 집계 함수 COUNT의 인자 수가 일치하지 않습니다
+문제: COUNT함수에는 하나의 인자만 들어가야합니다
+해결방법: COUNT(AGE, JOINED) 대신 NULL 값이 없을 것으로 예상되는 USER_ID를 써줍니다. => COUNT(USER_ID)
+
+두 번째 오류 메세지: select 목록 식은 다음에서 그룹화되거나 집계되지 않은 열을 참조합니다
+문제: group by에 적절한 컬럼을 명시하지 않았을 경우 발생하는 오류, AGE 칼럼을 명시했지만 GROUP BY 함수를 쓰지 않았기 때문에 생긴 문제입니다
+해결방법: AGE를 지워줍니다
+
 ~~~
 
 
