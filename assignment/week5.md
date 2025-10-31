@@ -58,8 +58,12 @@
 * CURRENT_TIME, EXTRACT, DATETIME_TRUNC, PARSE_DATETIME, FROMAT_DATETIME 을 설명할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+**## Timestamp vs Datetime 비교**
 
+|       | Timestamp            | Datetime |
+| ----- | ---------------------- | --------- |
+| 1주차 | 섹션 **1-1** ~ **2-2** | ✅         |
+| 2주차 | 섹션 **2-3** ~ **2-5** | ✅         |
 
 
 # 4-6. 조건문(CASE WHEN, IF)
