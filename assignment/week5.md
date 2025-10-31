@@ -62,9 +62,108 @@
 
 |       | Timestamp            | Datetime |
 | ----- | ---------------------- | --------- |
-| 타임존 | UTC라고 나옴 | T가 나옴         |
+| 타임존 | UTC(타임존 정보O) | T(타임존 정보X)      |
 | 시간차이 | 한국시간 -9시간 | 한국 zone 사용 시 한국시간과 동일        |
+|   쿼리    | current_Timestamp()          | Datetime(current_Timestamp(),'Asia/Seoul') |
 
+출력된 쿼리값에 타임존 정보(ex. UTC)가 없으면 어떤 기준으로 나온 시간인지 판별이 어려울 수 있음 
+
+## Datetime 함수
+
+### 1. Current_datetime
+
+CURRENT_DATETIME([time_zone]) : 현재 datetime 출력
+
+```
+SELECT
+ CURRENT_DATE() AS current_date,
+ CURRENT_DATE("Asia/Seoul") AS seoul_date,
+ CURRENT_DATETIME() AS current_datetime,
+ CURRENT_DATETIME("Asia/Seoul") AS current_datetime_seoul,
+```
+time_zone이 없을 경우, -9시간의 date와 datetime이 출력됨
+
+### 2. EXTRACT
+
+1) EXTRACT( [PART] FROM DATETIME "[현재 날짜와 시간]" AS 이름 : DATETIME에서 특정 부분만 추출하고 싶은 경우
+
+```
+SELECT
+ EXTRACT( YEAR FROM DATETIME "2025-10-31 12:52:19" ) AS year
+```
+-> 2025
+
+2) EXTRACT ( DAYOFWEEK FROM datetime_col) : 요일 추출
+
+```
+SELECT
+ EXTRACT(DAYOFWEEK FROME DATETIME "2025-10-31 12:52:19") AS day_of_week_sun
+```
+-> 6(금요일이므로)
+
+일요일부터 [1,7] 범위값
+
+### 3. Datetime_trunc
+
+DATETIME_TRUNC(datetime_col, [Part]) : 파트를 기준으로 출력값을 남기고 싶은 경우
+
+```
+SELECT
+ DATETIME_TRUNC(DATETIME "2025-10-31 12:52:19", DAY) AS day_trunc,
+ DATETIME_TRUNC(DATETIME "2025-10-31 12:52:19", HOUR) AS hour_trunc
+```
+
+-> 2025-10-31(day까지만 출력되도록 함)
+-> 2025-10-31 12:00:00 
+
+### 4. PARSE_DATETIME
+
+PARSE_DATETIME('문자열의 형태','DATETIME 문자열') AS datetime : 문자열로 저장된 datetime을 daytime 타입으로 바꾸고 싶은 경우
+
+```
+SELECT
+ PARSE_DATETIME('%Y-%m-%d %H:%M:%S','2025-10-31 12:52:19') AS parse_datetime
+```
+-> 2025-10-31 12:52:19(이제 datetime 유형의 데이터가 되었음)
+
+### 5. FORMAT_DATETIME
+
+FORMAT_DATETIME("%c", DATETIME "2024-01-11 12:35:35") AS formatted
+: DATETIME 타입 데이터를 특정 형태의 문자열 데이터로 변환하고 싶은 경우 
+
+-> PARSE와 반대 
+
+
+### 6. LAST_DAY
+
+LAST_DAY(DATETIME, [기준]): 마지막 날을 알고 싶은 경우(달마다 마지막날이 다르므로)
+
+```
+SELECT
+ LAST_DAY(DATETIME '2025-10-21 12:52:19') AS last_day
+ LAST_DAY(DATETIME '2025-10-21 12:52:19',week) AS last_day_month
+ LAST_DAY(DATETIME '2025-10-21 12:52:19',week(MONDAY)) AS last_day_month_mon
+```
+-> 2025-10-31
+-> 2025-10-25(토요일, sql환경에서는 일요일이 주의 시작점)
+-> 2025-10-26(일요일, 월요일을 기준으로 그 전 날)
+
+### 7. DATETIME_DIFF
+
+DATETIME_DIFF(첫 DATETIME, 두 번째 DATETIME, 궁금한 차이): 두 DATETIME의 차이를 알고 싶은 경우
+
+```
+SELECT
+ DATETIME_DIFF(FIRST, SECOND, DAY) AS day_diff1,
+ DATETIME_DIFF(FIRST, SECOND, MONTH) AS day_diff2,
+FROM(
+ SELECT
+  DATETIME "2024-04-02 10:20:00" AS FIRST,
+  DATETIME "2021-01-01 15:30:00" AS SECOND,
+)
+```
+-> day_diff1: 1187 (일, 첫 번째 datetime이 더 큰(최근 날짜) 값 이므로 양수)
+-> day_diff2: 39 (개월) 
 
 # 4-6. 조건문(CASE WHEN, IF)
 
