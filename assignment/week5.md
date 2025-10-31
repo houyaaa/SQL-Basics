@@ -165,6 +165,82 @@ FROM(
 -> day_diff1: 1187 (일, 첫 번째 datetime이 더 큰(최근 날짜) 값 이므로 양수)
 -> day_diff2: 39 (개월) 
 
+
+# 4-5. 연습문제
+
+데이터 타입에서 catch_datetime에 UTC가 적혀있음
+datetime은 T가 있어야함 이름은 datetime이지만
+, Timestamp 타입의 데이터임을 알 수 있음 
+
+-> 그렇다면, catch_date의 기준 타임존은 어디일까? 를 의심해봐야함 
+
+sol) DATE(DATETIME(catch_datetime, "Asia/Seoul")) != catch_date 
+
+라면, catch_date는 사용하기 어려울 수 있음 
+
+```
+select
+count(*)
+from(
+ select
+  id,
+  catch_date,
+  date(datetime(catch_datetime,"Asia/Seoul")) as changed_to_kr_time
+ from basic.pokemon_trainer
+)
+where
+catch_date != changed_to_kr_time
+```
+
+-> 141 행(이 다른 날짜를 가진 행)
+
+따라서 컬럼의 설명을 꼭 확인하고 sql을 확인해야한다. 
+
+## 1번 문제 
+Q; 트레이너가 포켓몬을 포획한 날짜(catch_date)를 기준으로 2023년 1월에 포획한 포켓몬의 수 
+
+-- 컬럼을 꼭 확인하고 쿼리를 작성(catch_date가 어떤 데이터 타입인지 확인)
+
+
+
+## 2번 문제 전에 확인해야할 것 
+battle_datetime과 datetime(battle.timestamp,"Asia/Seoul")이 같은지 확인
+
+```
+select
+*
+from basic.battle
+where
+battle_datetime!= datetime(battle.timestamp,"Asia/Seoul")
+
+```
+-> 실행 결과 없음 (다른 것이 없다는 얘기)
+
+or 이렇게 쿼리를 짤 수도 있음
+
+```
+select
+countif(battle_datetime!= datetime(battle.timestamp,"Asia/Seoul")
+as not_same_date
+from basic.battle
+
+```
+-> not_same_date : 0 
+
+
+
+**숫자형일 때, between을 쓸 수 있음** 
+ex) extract(hour from battle_datetime) between 6 and 18
+
+## 2-1문제
+Q: 시간대별로 몇 개의 배틀이 있나? 
+
+```
+select
+ 
+```
+
+
 # 4-6. 조건문(CASE WHEN, IF)
 
 ~~~
