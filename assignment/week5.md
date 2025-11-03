@@ -237,9 +237,75 @@ Q: 시간대별로 몇 개의 배틀이 있나?
 
 ```
 select
+count(distinct id) as cnt,
+hour
+from(
+select
+id, #본 쿼리에서 id의 개수를 쓸거니까 id를 선택해줘야함
+extract(hour from battle_datetime) as hour
+from basic.pokemin_trainer
+)
+group by hour
  
 ```
 
+## 3번 문제
+각 트레이너별<< 이기 때문에 group by 를 써야함
+
+```
+select
+trainer_id,
+format_date*%m/%d/%Y, min_catch_date)
+from(
+select
+trainer_id,
+min(date(catch_datetime,"Asia/Seoul")) as min_catch_date
+from basic.trainer_pokemon
+)
+group by trainer_id
+```
+
+%Y: 2023 // %y:23 
+
+## 4번 문제
+```
+select
+extract(dayofweek from battle_datetime) as weekday,
+count(*) as cnt
+from basic.trainer_pokemon
+group by weekday
+```
+
+count(*) cnt를 안적으면 
+배틀이 발생한 요일에는 어떤 것들이 있나요? 라고 물어보는거랑 같음
+결과) 
+weekday
+1(일요일)
+2(월요일)
+4
+7
+이렇게 나올거임 
+
+## 5번 문제
+```
+select
+trainer_id,
+datetime_diff(min_catch_date,max_catch_date,day) as diff
+from(
+select
+trainer_id,
+min(date(catch_datetime,"Asia/Seoul"))as min_catch_date,
+max(date(catch_datetime,"Asia/Seoul"))as max_catch_date
+from basic.trainer_pokemon
+
+group by trainer_id
+)
+order by diff desc
+
+```
+? 왜 group by trainer_id가 있어야 하느냐
+"데이터를 먼저 trainer_id별로 같은 폴더에 넣고 각 폴더에서 min값과 max값을 계산해줘" 
+어떤 기준으로 묶어서 집계할 것인지 반드시 group by 절에 명시해야함 
 
 # 4-6. 조건문(CASE WHEN, IF)
 
