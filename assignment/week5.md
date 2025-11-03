@@ -329,6 +329,8 @@ FROM pokemon;
 ~~~
 여기에 답을 작성해주세요!
 ~~~
+## 인증샷
+<img width="1891" height="752" alt="image" src="https://github.com/user-attachments/assets/e90f17ae-ff7b-41b3-b039-c15d68eb43c9" />
 
 
 
