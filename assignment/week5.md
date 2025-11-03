@@ -348,7 +348,8 @@ from --
 > **🧚Q. 광윤이는 사용자 로그 데이터에서, 2021년에 접속한 사용자 수를  집계하려고 했습니다. 그는 여러 SQL 쿼리들을 실행해봤지만, 그 중 일부는 문법적으로 잘못되어 실행되지 않았습니다. 다음 보기 중 틀린 쿼리를 모두 골라보세요 (복수 선택 가능)**
 
 ~~~sql
-1. SELECT COUNT(*)  
+1. SELECT
+    COUNT(*)  
    FROM user_log  
    WHERE EXTRACT(YEAR FROM login_date) = 2021;
 
@@ -368,7 +369,10 @@ from --
 <!-- 틀린쿼리에 대한 오류의 원인도 같이 작성해주세요. 문제에서 제공된 login_data 컬럼은 DATE type의 데이터를 가지고 있다고 가정하시면 됩니다. -->
 
 ~~~
-여기에 답을 작성해주세요!
+1. 년도는 나오지 않지만 얼마만큼의 사용자가 접속했는지 알 수 있음
+2. 해당 연도의 얼마만큼의 사용자가 접속했는지 알 수 있음
+3. **오류** login_date는 날짜컬럼 그 중 년도만 추출해야함
+4. 원래 오류라고 생각했는데 (between이 숫자 데이터에만 적용할 수 있는 줄 알았음) 정답임둥
 ~~~
 
 
@@ -399,7 +403,9 @@ FROM pokemon;
 <!-- 근거와 함께 답을 작성해주세요 -->
 
 ~~~
-여기에 답을 작성해주세요!
+type1이 'Fire' 혹은 'Water'이 아닌 경우 'Normal'로 표기하는 쿼리임
+
+따라서 Bulbasaur이 normal로 출력됨 
 ~~~
 ## 인증샷
 <img width="1891" height="752" alt="image" src="https://github.com/user-attachments/assets/e90f17ae-ff7b-41b3-b039-c15d68eb43c9" />
