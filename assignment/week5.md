@@ -405,7 +405,7 @@ FROM pokemon;
 ~~~
 type1이 'Fire' 혹은 'Water'이 아닌 경우 'Normal'로 표기하는 쿼리임
 
-따라서 Bulbasaur이 normal로 출력됨 
+따라서 Bulbasaur와 Pikachu가 normal로 출력됨 
 ~~~
 ## 인증샷
 <img width="1891" height="752" alt="image" src="https://github.com/user-attachments/assets/e90f17ae-ff7b-41b3-b039-c15d68eb43c9" />
