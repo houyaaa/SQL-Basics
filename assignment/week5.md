@@ -325,7 +325,13 @@ order by diff desc
 * 4-5, 4-7 각각에서 두 문제 이상 (최소 4문제) 푼 내용 정리하기
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+## 1번 문제
+```
+select
+kor_name,
+if(speed >= 70, "빠름", "느림") as speed_category
+from --
+```
 
 
 
