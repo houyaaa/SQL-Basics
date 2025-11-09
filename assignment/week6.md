@@ -55,7 +55,19 @@
 * JOIN에 대한 정의와 필요성에 대해 설명할 수 있다.
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+
+JOIN: 서로 다른 데이터 테이블을 연결
+
+trainer_pokemon 테이블의 trainer_id와 trainer 테이블의 id를 기준으로 두 테이블 연결(JOIN)
+
+```
+select
+tp*,
+t*
+from trainer_pokemon as tp
+left join trainer as t
+on tp.trainer_id=t.id
+```
 
 
 
@@ -67,7 +79,7 @@
 * 각 JOIN 방법들의 차이점에 대해서 설명할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+<img width="3373" height="1000" alt="image" src="https://github.com/user-attachments/assets/08cdbe23-22b7-49e2-bc5a-1b127c256399" />
 
 
 
@@ -79,7 +91,68 @@
 * JOIN 을 활용한 쿼리를 작성할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+1. 테이블 확인: 테이블에 저장된 데이터, 컬럼 확인
+2. 기준 테이블 정의: 가장 많이 참고할 기준 테이블 정의
+3. JOIN KEY 찾기: 여러 table과 연결할 key 정리
+4. 결과 예상하기: 결과 테이블을 예상해서 손 or 엑셀로 작성
+5. 쿼리 작성/검증: 예상한 결과와 동일한 결과가 나오는지 확인
+
+
+**SQL JOIN문법**
+SELECT
+  a.col1,
+  a.col2,
+  b.col1,
+  b.col2
+FROM table1 as a
+left join table2 as b
+on a.key=b.key
+
+
+ex_ 
+1. trainer_pokemon의 trainer_id와 trainer의 id join
+2. trainer_pokemon의 pokemon_id 와 pokemon의 id join
+
+```
+SELECT
+tp*,
+t*,
+p*
+FROM basic.trainer_pokemon as tp
+left join basic.trainer as t
+on tp.trainer_id=t.id
+left join basic.pokemon as p
+on tp.pokemon_id = p.id
+```
+
+**헷갈릴 부분**
+1) 여러 JOIN 중 어떤 것 사용?
+
+교집합: inner
+모든 조합: cross
+그 외: left 추천 
+
++) left join 
+where col is not null 을 쓰면 inner join
+
+2) 어떤 table을 왼쪽에?
+
+   기준이 되는 table이 왼쪽
+
+   기준 -> 데이터 요소가 빠짐없이 존재?
+
+   ex) 유저들의 데이터? -> user table의 id
+       주문한 유저들의 데이터? -> order table의 user_id
+
+3) 여러 table 연결 가능?
+
+   가능!
+
+4) 컬럼은 모두 다 선택해야함?
+
+   비용 측면에서 사용하지 않을 컬럼은 선택하지 않는 것을 선호
+
+   제일 안쪽 서브쿼리에서 필요한 컬럼을 적어주고 바깥쿼리에서 * except()을 쓰며 비용 줄이기기
 
 
 
@@ -90,9 +163,67 @@
 * 연습문제(3문제 이상) 푼 것들 정리하기
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+### **1번) 트레이너가 보유한 포켓몬들 몇 마리?**
 
+1. 테이블 확인
+   trainer_pokemon, trainer, pokemon 모두 필요
+   
+2. 기준 테이블 정의
+  trainer_pokemon이 기준
 
+3. JOIN KEY 찾기
+  trainer_pokemon 과 trainer을 id로 join
+  trainer_pokemon 과 pokemon도 id로 join
+  pokemon 테이블의 kor_name컬럼 필요
+
+```
+SELECT
+kor_name as pokemon_name, 
+count(*아아니 여기에 뭘 넣어야됨???????*) as pokemon_cnt
+FROM(
+SELECT
+  tp.trainer_id,
+  tp.pokemon_id,
+  tp.status,
+  t.id,
+  p.id,
+  p.kor_name
+FROM basic.trainer_pokemon as tp 
+LEFT JOIN basic.pokemon as p
+on tp.pokemon_id = p.id
+LEFT JOIN basic.trainer as t
+on tp.trainer_id = t.id
+where status in("Active", "Trainig")
+)
+group by kor_name
+```
+<오답노트>
+
+count(id)를 쓰니 Column name id is ambiguous 라고 하심 -> 더 정확한 컬럼명을 써야함 
+
+아 그리고 trainer_pokemon을 가져올 때 status가 training과 active인 것만 가져올거임 그걸 tp라고 지정할거임
+
+retry
+
+```
+SELECT
+kor_name as pokemon_name
+count(tp.id) as pokemon_cnt
+from
+(SELECT
+id,
+trainer_id,
+pokemon_id,
+status
+FROM basic.trainer_pokemon
+where status in ("Active", "Training")
+) as tp 
+LEFT JOIN basic.pokemon as p
+on tp.pokemon_id = p.id
+LEFT JOIN basic.trainer as t
+on tp.trainer_id = t.id
+group by kor_name
+```
 
 <br>
 
