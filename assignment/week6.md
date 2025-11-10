@@ -99,6 +99,7 @@ on tp.trainer_id=t.id
 
 
 **SQL JOIN문법**
+```
 SELECT
   a.col1,
   a.col2,
@@ -107,7 +108,7 @@ SELECT
 FROM table1 as a
 left join table2 as b
 on a.key=b.key
-
+```
 
 ex_ 
 1. trainer_pokemon의 trainer_id와 trainer의 id join
@@ -203,7 +204,7 @@ count(id)를 쓰니 Column name id is ambiguous 라고 하심 -> 더 정확한 �
 
 아 그리고 trainer_pokemon을 가져올 때 status가 training과 active인 것만 가져올거임 그걸 tp라고 지정할거임
 
-retry
+<retry>
 
 ```
 SELECT
@@ -224,6 +225,182 @@ LEFT JOIN basic.trainer as t
 on tp.trainer_id = t.id
 group by kor_name
 ```
+
+### **2번) 각 트레이너가 보유한 포켓몬들 몇 마리?**
+
+1. 테이블 확인
+   trainer_pokemon, pokemon 모두 필요
+   
+2. 기준 테이블 정의
+  trainer_pokemon이 기준
+
+3. JOIN KEY 찾기
+   trainer_pokemon의 pokemon_id 와 pokemon의 id join
+
+4. 결과 예상하기
+   
+| trainer_id  | pokemon            | pokemon_cnt |
+| ----- | ---------------------- | --------- |
+| 1 | 이상해씨 | 2         |
+| 2 | 이브이 | 4         |
+| 3 |이상해씨 | 1        |
+
+```
+select
+tp*,
+kor_name as pokemon_name,
+count(tp.id) as pokemon_cnt
+from
+(SELECT
+id,
+trainer_id,
+pokemon_id,
+FROM basic.trainer_pokemon 
+where status in ("Active", "Training")
+) as tp
+left join basic.pokemon as p 
+on tp.pokemon_id = p.id
+where type1 = "Grass"
+group by kor_name
+```
+
+<오답노트>
+
+tp.*  선택 안해도 됨 출력할 때 필요한 컬럼은 그 컬럼들이 아니니까
+
+**group by kor_name이 아니라 type1을 해줘야함 지금 만들어놓은 것은 grass타입의 포켓몬들 중 어떤 포켓몬들이 트레이너들에게 보유되었는지를 출력**
+
+<retry>
+
+  ```
+select
+  type1,
+  count(tp.id) as pokemon_cnt
+from
+(SELECT
+id,
+trainer_id,
+pokemon_id,
+  status
+FROM basic.trainer_pokemon 
+where status in ("Active", "Training")
+) as tp
+left join basic.pokemon as p 
+on tp.pokemon_id = p.id
+where type1 = "Grass"
+group by type1
+```
+
+### **3번) 트레이너의 고향과 포켓몬을 포획한 위치가 같은 경우?**
+
+1. 테이블 확인
+   trainer_pokemon, trainer 모두 필요
+   
+2. 기준 테이블 정의
+  trainer_pokemon이 기준
+
+3. JOIN KEY 찾기
+   trainer_pokemon의 trainer_id 와 trainer의 id join
+
+```
+select 
+tp.trainer_id,
+tp.location,
+t.hometown,
+t.id
+from basic.trainer_pokemon as tp
+left join basic.trainer as t
+on tp.trainer_id = t.id
+where location = hometown
+```
+
+<오답노트>
+
+여기까지 했을 때, 위치 고향이 같은 케이스가 모두 나옴
+
+-> count 를 어떻게 써야하지?
+
+<retry>
+
+```
+select
+  count(distinct tp.trainer_id) as trainer_uniq,** 고향에서 포켓몬을 잡아본 적이 있는 트레이너의 수 
+  count(tp.trainer_id) as trainer_cnt** 트레이너가 고향에서 포켓몬을 잡은 모든 경우의 수
+from basic.trainer_pokemon as tp
+left join basic.trainer as t
+on tp.trainer_id = t.id
+where 
+  tp.location is not null **
+  and location = hometown
+```
+
+### **4번) Master 등급인 트레이너들은 어떤 타입의 포켓몬을 가장 많이 보유?**
+
+1. 테이블 확인
+   trainer_pokemon, trainer, pokemon 모두 필요
+   
+2. 기준 테이블 정의
+  trainer_pokemon이 기준
+
+3. JOIN KEY 찾기
+   trainer_pokemon의 trainer_id 와 trainer의 id join
+   trainer_pokemon의 pokemon_id 와 pokemon의 id join
+
+```
+select
+count(tp.id) as pokemon_cnt,
+type1
+from basic.trainer_pokemon as tp
+left join  basic.trainer as t
+on tp.trainer_id = t.id 
+left join  basic.pokemon as p 
+on tp.pokemon_id = p.id
+where achievement_level = "Master" 
+      and status in ("Active", "Training")
+group by type1
+order by pokemon_cnt desc
+```
+
+<오답노트>
+
+쿼리 비용 측면 -> trainer_pokemon에서 status가 보유한 상태인 것만 가지고 올 것 
+
+order by pokemon_cnt 대신 2라고 써도 됨 
+
+
+### **5번) Incheon 출신 트레이너 -> 1,2 세대 얼마나 보유?**
+
+1. 테이블 확인
+   trainer_pokemon, trainer, pokemon 모두 필요
+   
+2. 기준 테이블 정의
+  trainer_pokemon이 기준
+
+3. JOIN KEY 찾기
+   trainer_pokemon의 trainer_id 와 trainer의 id join
+   trainer_pokemon의 pokemon_id 와 pokemon의 id join
+
+```
+SELECT
+count(tp.id) as cnt,
+generation
+from(
+SELECT
+id,
+trainer_id,
+pokemon_id,
+status
+FROM basic.trainer_pokemon
+where status in ("Active", "Training")
+) as tp 
+LEFT JOIN basic.pokemon as p
+on tp.pokemon_id = p.id
+LEFT JOIN basic.trainer as t
+on tp.trainer_id = t.id
+where hometown = "Incheon" 
+group by generation
+```
+
 
 <br>
 
