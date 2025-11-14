@@ -54,7 +54,64 @@
 * SQL 쿼리를 가독성 있게 작성할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+### 1. 예약어는 대문자로 작성
+
+```
+SELECT
+
+FROM
+WHERE 
+GROUP BY 
+ORDER BY
+```
+
+
+### 2. 컬럼 이름 Snake_case
+
+아래 바가 있는 이름으로 작명
+
+
+
+### 3. 명시적 vs 암시적인 이름
+
+Alias (AS 사용할 때 하는 작명) 로 별칭을 지을 때, 명시적인 이름 적용
+
+count(id) AS pokemon_cnt
+
+
+
+### 4. 왼쪽 정렬
+
+```
+SELECT
+  col
+FROM table
+WHERE
+```
+
+### 5. 예약어, 컬럼은 한 줄에 하나씩 권장
+
+바로 주석처리할 수 있게
+
+```
+SELECT
+  col1,
+  col2,
+  col3,
+FROM table
+WHERE
+```
+
+### 6. 쉼표는 컬럼 바로 뒤에 
+
+```
+SELECT
+  col1
+  ,col2
+  ,col3
+FROM table
+WHERE
+```
 
 
 
@@ -66,7 +123,25 @@
 * WITH문과 파티션을 활용해서도 가독성을 챙길 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+서브쿼리의 단점: 안쪽 쿼리 먼저 실행하기 때문에 직관적으로 이해가 어려움
+
+-> 해결: WITH 문 활용
+
+```
+WITH temp_table AS (
+  SELECT
+    col1
+    ,col2
+    ,col3
+  FROM table
+)
+SELECT
+ col1,
+FROM temp_table 
+WHERE
+
+
+
 
 
 
