@@ -245,8 +245,11 @@ https://leetcode.com/problems/list-the-products-ordered-in-a-period/
 
 
 
-<!-- 정답을 맞추게 되면, 정답입니다. 이 부분을 캡처해서 이 주석을 지우시고 첨부해주시면 됩니다. --> 
-
+<img width="1413" height="496" alt="image" src="https://github.com/user-attachments/assets/26bc39b1-e222-4645-9059-eca836f43bd5" />
+<img width="1386" height="469" alt="image" src="https://github.com/user-attachments/assets/0eaaf4b3-2878-4faf-9072-c837bb650e48" />
+<img width="1406" height="437" alt="image" src="https://github.com/user-attachments/assets/541193c3-2d89-4589-ace4-2e039cfc50ef" />
+<img width="942" height="770" alt="image" src="https://github.com/user-attachments/assets/8d123b12-5d60-4ee7-83f9-309cba1be6ba" />
+<img width="768" height="695" alt="image" src="https://github.com/user-attachments/assets/afeed9a9-3de3-45b5-990d-01d1930b1619" />
 
 
 ## 문제 1
@@ -269,7 +272,18 @@ where u.region= 'Busan'			order by o.OrderID
 
 
 ~~~
-여기에 답을 작성해주세요.
+SELECT
+  u.name,
+  o.OrderID,
+  p.ProductName ,
+  od.Quantity ,
+  od.UnitPrice
+FROM Users u
+JOIN Orders o on u.id = o.userId
+JOIN OrderDetails od on o.OrderID = od.orderID
+JOIN Products p on od.ProductID = p.ProductID
+WHERE u.region= 'Busan'
+ORDER BY o.OrderID
 ~~~
 
 
